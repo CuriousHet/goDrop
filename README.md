@@ -1,120 +1,102 @@
-# D-CAS (Distributed Content-Addressable Storage)
+# 🚀 GoDrop
 
-D-CAS is a distributed content-addressable storage system that allows you to store and retrieve files using their content hash or user-defined code words.
+**GoDrop** is a lightweight, no-login file sharing system built with **Go** and powered by **Cloudflare R2** (or any S3-compatible storage). With a minimal interface and no authentication barrier, sharing files becomes instant and hassle-free.
 
-## Features
+---
 
-- **Content-Addressable Storage**: Files are stored and retrieved using their SHA-256 hash
-- **Code Word Support**: Optionally assign user-friendly code words to files
-- **Web Interface**: Modern, responsive UI for file uploads and searches
-- **Multiple Storage Backends**: Support for local filesystem and MinIO
-- **RESTful API**: Easy integration with other applications
+## ✨ Features
 
-## Getting Started
+- 🌐 Clean web UI for uploading and downloading files
+- ☁️ Supports S3-compatible storage (Cloudflare R2, MinIO, AWS S3, etc.)
+- ⚙️ Fully configurable via `.env` or environment variables
+- 🧠 Optionally assign user-friendly **code words** to files for easy reference
 
-### Prerequisites
+---
 
-- Go 1.21 or later
-- MinIO (optional, for distributed storage)
+## 🚀 Getting Started
 
-### Installation
+### 📋 Prerequisites
 
-1. Clone the repository:
+- [Go 1.21+](https://golang.org/dl/)
+
+---
+
+### 📥 Installation
+
+1. **Clone the repository:**
+
 ```bash
-git clone https://github.com/yourusername/D-CAS.git
-cd D-CAS
+git clone https://github.com/yourusername/GoDrop.git
+cd GoDrop
 ```
 
-2. Install dependencies:
+2. **Install dependencies:**
+
 ```bash
 go mod download
 ```
 
-3. Build the application:
+3. **Build the application:**
+
 ```bash
-go build -o bin/D-CAS.exe main.go
+go build -o bin/godrop main.go
 ```
 
-### Configuration
+> 💡 You can rename the binary to whatever suits your workflow (`godrop`, `dropper`, etc.)
 
-The application can be configured using environment variables:
+---
 
-```bash
+### ⚙️ Configuration
+
+Set the following environment variables, either in your shell or in a `.env` file in the project root:
+
+```env
 # Server configuration
 PORT=8080                    # Web server port
-NODE_PORT=8081              # Node communication port
-MODE=web                    # Operation mode: web or node
+NODE_PORT=8081               # (Optional) Node communication port
+MODE=web                     # Run mode: 'web' or 'node'
 
 # Storage configuration
-STORAGE_TYPE=local          # Storage type: local or minio
-STORAGE_ENDPOINT=           # MinIO endpoint (required for minio storage)
-STORAGE_ACCESS_KEY=         # MinIO access key
-STORAGE_SECRET_KEY=         # MinIO secret key
-STORAGE_BUCKET=            # MinIO bucket name
-STORAGE_USE_SSL=false      # Use SSL for MinIO connection
+STORAGE_TYPE=s3              # Only 's3' is supported
+STORAGE_ENDPOINT=            # Cloudflare R2 or other S3-compatible endpoint
+STORAGE_ACCESS_KEY=          # Your storage access key
+STORAGE_SECRET_KEY=          # Your storage secret key
+STORAGE_BUCKET=              # Target bucket name
+STORAGE_USE_SSL=true         # Set false if using HTTP
 ```
 
-### Running the Application
+---
 
-1. Start the web server:
+### ▶️ Running the Application
+
+1. **Start the web server:**
+
 ```bash
-./bin/D-CAS.exe -mode=web -port=8080
+go run main.go
 ```
 
-2. Open your browser and navigate to `http://localhost:8080`
+2. **Open your browser:**
 
-## API Endpoints
+Navigate to [http://localhost:8080](http://localhost:8080)
 
-### Upload File
-```
-POST /api/upload
-Content-Type: multipart/form-data
+> ✅ You can now upload and share files via the intuitive UI.
 
-Parameters:
-- file: The file to upload
-- code_word: Optional code word for the file
-```
+---
 
-### Search Files
-```
-GET /api/search?q=<hash_or_code_word>
-```
+## 👨‍💻 Contributing
 
-### Download File
-```
-GET /api/download/<hash>
-```
-
-## Development
-
-### Project Structure
-
-```
-D-CAS/
-├── bin/                    # Compiled binaries
-├── config/                 # Configuration package
-├── storage/                # Storage interface and implementations
-├── web/                    # Web server and static files
-│   └── static/            # Frontend assets
-├── main.go                 # Application entry point
-└── README.md              # This file
-```
-
-### Adding New Features
-
-1. Create a new branch for your feature
-2. Make your changes
-3. Add tests if applicable
-4. Submit a pull request
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Contributing
+We welcome contributions to improve GoDrop!
 
 1. Fork the repository
-2. Create your feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a new Pull Request
+2. Create your feature branch: `git checkout -b feature/your-feature`
+3. Commit your changes: `git commit -m "Add your message"`
+4. Push to the branch: `git push origin feature/your-feature`
+5. Create a Pull Request
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License** — see the [LICENSE](./LICENSE) file for details.
+
+---
