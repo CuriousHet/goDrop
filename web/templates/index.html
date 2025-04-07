@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GoDrop</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --primary-hover: #4338ca;
+            --success-color: #22c55e;
+            --danger-color: #ef4444;
+            --background-color: #f8fafc;
+            --card-background: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            background: linear-gradient(90deg, var(--primary-color), #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .card {
+            background: var(--card-background);
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+
+        .card h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+        }
+
+        .card h2 svg {
+            margin-right: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .button {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .button svg {
+            margin-right: 0.5rem;
+        }
+
+        .button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .button:disabled {
+            background-color: var(--text-secondary);
+            cursor: not-allowed;
+        }
+
+        .result {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            background-color: #f0fdf4;
+            border: 1px solid #dcfce7;
+        }
+
+        .result.success {
+            background-color: #f0fdf4;
+            border-color: #dcfce7;
+        }
+
+        .result.error {
+            background-color: #fef2f2;
+            border-color: #fee2e2;
+        }
+
+        .file-list {
+            margin-top: 2rem;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            transition: background-color 0.2s;
+        }
+
+        .file-item:hover {
+            background-color: #f8fafc;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .file-icon {
+            width: 2rem;
+            height: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f1f5f9;
+            border-radius: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .file-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .file-name {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .file-meta {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-button {
+            padding: 0.5rem;
+            border: none;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .action-button.download {
+            background-color: #f1f5f9;
+            color: var(--primary-color);
+        }
+
+        .action-button.delete {
+            background-color: #fef2f2;
+            color: var(--danger-color);
+        }
+
+        .action-button:hover {
+            opacity: 0.8;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            width: 2rem;
+            height: 2rem;
+            border: 3px solid #f1f5f9;
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .copy-button {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            cursor: pointer;
+            margin-left: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+            transition: background-color 0.2s;
+        }
+
+        .copy-button:hover {
+            background-color: rgba(79, 70, 229, 0.1);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 3rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>GoDrop</h1>
+            <p>A quick and easy way to share files</p>
+        </div>
+
+        <div class="card">
+            <h2>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                Upload File
+            </h2>
+            <form id="uploadForm">
+                <div class="form-group">
+                    <label for="file">Select File</label>
+                    <input type="file" id="file" name="file" class="form-control" required>
+                    <small style="color: var(--text-secondary); margin-top: 0.5rem; display: block;">
+                        Maximum file size: 50MB. All file types are supported.
+                    </small>
+                </div>
+                <div class="form-group">
+                    <label for="code_word">Code Word (Optional)</label>
+                    <input type="text" id="code_word" name="code_word" class="form-control" 
+                           placeholder="Enter a code word to protect your file">
+                </div>
+                <button type="submit" class="button" id="uploadButton">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    Upload File
+                </button>
+            </form>
+            <div class="loading" id="uploadLoading">
+                <div class="spinner"></div>
+            </div>
+            <div id="uploadResult" class="result"></div>
+        </div>
+
+        <div class="card">
+            <h2>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Receive File
+            </h2>
+            <form id="receiveForm">
+                <div class="form-group">
+                    <label for="file_hash">File Hash (Optional)</label>
+                    <input type="text" id="file_hash" name="file_hash" class="form-control" 
+                           placeholder="Enter the file hash">
+                </div>
+                <div class="form-group">
+                    <label for="receive_code_word">Code Word (Optional)</label>
+                    <input type="text" id="receive_code_word" name="receive_code_word" class="form-control" 
+                           placeholder="Enter the code word if the file is protected">
+                </div>
+                <button type="submit" class="button" id="receiveButton">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Receive File
+                </button>
+            </form>
+            <div class="loading" id="receiveLoading">
+                <div class="spinner"></div>
+            </div>
+            <div id="receiveResult" class="result"></div>
+        </div>
+
+        <div class="footer">
+            <p>GoDrop &copy; 2025 - A quick and easy way to share files</p>
+        </div>
+    </div>
+
+    <script>
+        const uploadForm = document.getElementById('uploadForm');
+        const uploadButton = document.getElementById('uploadButton');
+        const uploadLoading = document.getElementById('uploadLoading');
+        const uploadResult = document.getElementById('uploadResult');
+        const receiveForm = document.getElementById('receiveForm');
+        const receiveButton = document.getElementById('receiveButton');
+        const receiveLoading = document.getElementById('receiveLoading');
+        const receiveResult = document.getElementById('receiveResult');
+
+        // Handle file upload
+        uploadForm.onsubmit = async (e) => {
+            e.preventDefault();
+            
+            // Show loading state
+            uploadButton.disabled = true;
+            uploadLoading.classList.add('active');
+            uploadResult.innerHTML = '';
+
+            const formData = new FormData();
+            formData.append('file', document.getElementById('file').files[0]);
+            formData.append('code_word', document.getElementById('code_word').value);
+
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Upload failed: ${response.statusText}`);
+                }
+
+                const result = await response.json();
+                
+                // Show success message
+                uploadResult.innerHTML = `
+                    <strong>File uploaded successfully!</strong>
+                    <div style="margin-top: 1rem;">
+                        <div style="margin-bottom: 0.5rem;">
+                            <strong>Filename:</strong> ${result.filename}
+                        </div>
+                        <div style="margin-bottom: 0.5rem;">
+                            <strong>Size:</strong> ${formatFileSize(result.size)}
+                        </div>
+                        <div style="margin-bottom: 0.5rem;">
+                            <strong>Type:</strong> ${result.type}
+                        </div>
+                        <div style="margin-bottom: 0.5rem;">
+                            <strong>File Hash:</strong> ${result.file_hash}
+                            <button onclick="copyToClipboard('${result.file_hash}')" class="copy-button">Copy</button>
+                        </div>
+                        ${result.code_word ? `
+                        <div style="margin-bottom: 0.5rem;">
+                            <strong>Code Word:</strong> ${result.code_word}
+                            <button onclick="copyToClipboard('${result.code_word}')" class="copy-button">Copy</button>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+                uploadResult.classList.add('success');
+
+                // Reset form
+                uploadForm.reset();
+            } catch (error) {
+                uploadResult.innerHTML = `Error uploading file: ${error.message}`;
+                uploadResult.classList.add('error');
+            } finally {
+                // Hide loading state
+                uploadButton.disabled = false;
+                uploadLoading.classList.remove('active');
+            }
+        };
+
+        // Handle file receive
+        receiveForm.onsubmit = async (e) => {
+            e.preventDefault();
+            
+            // Show loading state
+            receiveButton.disabled = true;
+            receiveLoading.classList.add('active');
+            receiveResult.innerHTML = '';
+
+            // Get form values
+            const fileHash = document.getElementById('file_hash').value.trim();
+            const codeWord = document.getElementById('receive_code_word').value.trim();
+
+            // Validate that at least one field is filled
+            if (!fileHash && !codeWord) {
+                receiveResult.innerHTML = 'Please provide either file hash or code word';
+                receiveResult.classList.add('error');
+                receiveButton.disabled = false;
+                receiveLoading.classList.remove('active');
+                return;
+            }
+
+            // Create form data
+            const formData = new URLSearchParams();
+            if (fileHash) formData.append('file_hash', fileHash);
+            if (codeWord) formData.append('code_word', codeWord);
+
+            try {
+                const response = await fetch('/receive', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: formData.toString()
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(errorText || `Receive failed: ${response.statusText}`);
+                }
+
+                // Get the filename from the Content-Disposition header if available
+                const contentDisposition = response.headers.get('Content-Disposition');
+                let filename = 'downloaded_file';
+                if (contentDisposition) {
+                    const matches = /filename="(.+)"/.exec(contentDisposition);
+                    if (matches) {
+                        filename = matches[1];
+                    }
+                }
+
+                // Create a blob from the response
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+
+                // Show success message
+                receiveResult.innerHTML = `
+                    <strong>File downloaded successfully!</strong><br>
+                    Filename: ${filename}
+                `;
+                receiveResult.classList.add('success');
+
+                // Reset form
+                receiveForm.reset();
+            } catch (error) {
+                receiveResult.innerHTML = `Error receiving file: ${error.message}`;
+                receiveResult.classList.add('error');
+            } finally {
+                // Hide loading state
+                receiveButton.disabled = false;
+                receiveLoading.classList.remove('active');
+            }
+        };
+
+        // Add copy to clipboard function
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                // Show temporary success message
+                const button = event.target;
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+            });
+        }
+
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+    </script>
+</body>
+</html> 

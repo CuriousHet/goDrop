@@ -1,0 +1,72 @@
+body {
+    background-color: #f8f9fa;
+}
+
+.navbar {
+    box-shadow: 0 2px 4px rgba(0,0,0,.1);
+}
+
+.card {
+    box-shadow: 0 2px 4px rgba(0,0,0,.05);
+    border: none;
+    margin-bottom: 20px;
+}
+
+.card-title {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.btn-primary {
+    background-color: #3498db;
+    border-color: #3498db;
+}
+
+.btn-primary:hover {
+    background-color: #2980b9;
+    border-color: #2980b9;
+}
+
+.form-control:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+}
+
+/* Upload progress bar */
+.progress {
+    display: none;
+    margin-top: 10px;
+}
+
+/* File preview */
+.file-preview {
+    max-width: 100%;
+    max-height: 200px;
+    margin-top: 10px;
+}
+
+/* Search results */
+.search-results {
+    margin-top: 20px;
+}
+
+.result-item {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.result-item:last-child {
+    border-bottom: none;
+}
+
+/* Alert messages */
+.alert {
+    margin-top: 10px;
+}
+
+/* Loading spinner */
+.spinner-border {
+    width: 1rem;
+    height: 1rem;
+    margin-right: 5px;
+} 

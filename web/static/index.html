@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoDrop</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold text-center mb-8">GoDrop</h1>
+        
+        <!-- Upload Section -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-xl font-semibold mb-4">Upload File</h2>
+            <form id="uploadForm" class="space-y-4">
+                <div class="form-group">
+                    <label for="file">Select File:</label>
+                    <input type="file" id="file" name="file" required>
+                </div>
+                <div class="form-group">
+                    <label for="codeWord">Code Word (optional):</label>
+                    <input type="text" id="codeWord" name="code_word" placeholder="Enter a memorable code word">
+                </div>
+                <button type="submit" class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    Upload
+                </button>
+            </form>
+            <div id="result" class="mt-4 hidden">
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                    <span class="block sm:inline">File uploaded successfully!</span>
+                    <div class="mt-2">
+                        <p>Hash: <span id="uploadHash" class="font-mono"></span></p>
+                        <p>Code Word: <span id="uploadCodeWord" class="font-mono"></span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Section -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-semibold mb-4">Search Files</h2>
+            <div class="flex space-x-4 mb-4">
+                <input type="text" id="searchQuery" placeholder="Enter hash or code word" class="flex-1 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                <button onclick="searchFiles()" class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    Search
+                </button>
+            </div>
+            <div id="searchResult" class="hidden">
+                <div class="bg-gray-50 border border-gray-200 rounded-md p-4">
+                    <h3 class="font-semibold mb-2">Search Results:</h3>
+                    <div id="searchResultsList" class="space-y-2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Upload form handler
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            const fileInput = document.getElementById('file');
+            const codeWord = document.getElementById('codeWord').value;
+            
+            formData.append('file', fileInput.files[0]);
+            if (codeWord) {
+                formData.append('code_word', codeWord);
+            }
+            
+            try {
+                const response = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                const resultDiv = document.getElementById('result');
+                resultDiv.style.display = 'block';
+                resultDiv.innerHTML = `
+                    <h3>Upload Successful!</h3>
+                    <p>Hash: ${result.hash}</p>
+                    ${result.code_word ? `<p>Code Word: ${result.code_word}</p>` : ''}
+                `;
+            } catch (error) {
+                console.error('Upload failed:', error);
+                alert('Upload failed. Please try again.');
+            }
+        });
+
+        // Search function
+        async function searchFiles() {
+            const query = document.getElementById('searchQuery').value;
+            if (!query) return;
+
+            try {
+                const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+                
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        document.getElementById('searchResult').classList.remove('hidden');
+                        document.getElementById('searchResultsList').innerHTML = '<p class="text-red-500">File not found</p>';
+                        return;
+                    }
+                    throw new Error('Search failed');
+                }
+
+                const result = await response.json();
+                
+                // Show result
+                document.getElementById('searchResult').classList.remove('hidden');
+                let html = '<div class="space-y-2">';
+                html += `<p>Hash: <span class="font-mono">${result.hash}</span></p>`;
+                if (result.code_word) {
+                    html += `<p>Code Word: <span class="font-mono">${result.code_word}</span></p>`;
+                }
+                html += `<a href="/api/download/${result.hash}" class="inline-block bg-green-500 text-white py-1 px-3 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">Download</a>`;
+                html += '</div>';
+                document.getElementById('searchResultsList').innerHTML = html;
+            } catch (error) {
+                document.getElementById('searchResult').classList.remove('hidden');
+                document.getElementById('searchResultsList').innerHTML = `<p class="text-red-500">Search failed: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html> 
