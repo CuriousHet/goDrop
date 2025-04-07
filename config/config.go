@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 
@@ -28,9 +29,15 @@ type StorageConfig struct {
 
 // Load loads configuration from environment variables
 func Load() (*Config, error) {
-	// Load .env file
-	if err := godotenv.Load(); err != nil {
-		return nil, fmt.Errorf("error loading .env file: %v", err)
+	// Load .env file only in local environment
+	if _, err := os.Stat(".env"); err == nil {
+		if err := godotenv.Load(); err != nil {
+			log.Printf("⚠️ Warning: Could not load .env file: %v", err)
+		} else {
+			log.Println("✅ .env file loaded for local development")
+		}
+	} else {
+		log.Println("ℹ️ .env not found — using system environment variables")
 	}
 
 	cfg := &Config{
@@ -94,6 +101,7 @@ func getEnvBool(key string, defaultValue bool) bool {
 	return defaultValue
 }
 
+// Optional utility method
 func (c *Config) GetStorageEndpoint() string {
 	return c.Storage.Endpoint
 }
