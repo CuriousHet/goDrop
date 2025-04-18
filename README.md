@@ -2,6 +2,8 @@
 
 **GoDrop** is a lightweight, no-login file sharing system built with **Go** and powered by **Cloudflare R2** (or any S3-compatible storage). With a minimal interface and no authentication barrier, sharing files becomes instant and hassle-free.
 
+[Demo]([https://example.com](https://godrop.onrender.com/))
+
 ---
 
 ## ✨ Features
